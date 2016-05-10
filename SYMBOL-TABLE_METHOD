@@ -1,21 +1,26 @@
-    void symbolTable(){
+void symbolTable(){
 
-        if((mySymbolTable.containsKey(splitter[1]))){
+        try{
+            if((mySymbolTable.containsKey(splitter[1]))){
 
-            int otherValue = mySymbolTable.get(splitter[1]);
-            mySymbolTable.put(splitter[0], otherValue);
-            myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
-                    + mySymbolTable.get(splitter[0]));
-            Log.d("otherValue", "symbolTable: " + mySymbolTable.get(splitter[0]));
-        }
+                int otherValue = mySymbolTable.get(splitter[1]);
+                mySymbolTable.put(splitter[0], otherValue);
+                myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                        + mySymbolTable.get(splitter[0]));
+                Log.d("otherValue", "symbolTable: " + mySymbolTable.get(splitter[0]));
+            }
+            if(!mySymbolTable.containsKey(splitter[0])){
 
-        if(!mySymbolTable.containsKey(splitter[0])){
-
-            variable = splitter[0];
-            value = Integer.parseInt(splitter[1]);
-
-            mySymbolTable.put(variable, value);
-            myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
-                                                    + mySymbolTable.get(variable));
+                variable = splitter[0];
+                mySymbolTable.put(variable, Integer.parseInt(splitter[1]));
+                myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                        + mySymbolTable.get(variable));
+            }
+            else if(mySymbolTable.containsKey(variable)){
+                myTV.setText(myTV.getText() +"\n"+ "Value already has value: "
+                        + mySymbolTable.get(variable));
+            }
+        }catch(Exception E ){
+            myTV.setText(myTV.getText() +"\n"+ "Error! Check your statement!");
         }
     }
