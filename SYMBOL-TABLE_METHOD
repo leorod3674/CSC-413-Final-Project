@@ -1,0 +1,21 @@
+    void symbolTable(){
+
+        if((mySymbolTable.containsKey(splitter[1]))){
+
+            int otherValue = mySymbolTable.get(splitter[1]);
+            mySymbolTable.put(splitter[0], otherValue);
+            myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                    + mySymbolTable.get(splitter[0]));
+            Log.d("otherValue", "symbolTable: " + mySymbolTable.get(splitter[0]));
+        }
+
+        if(!mySymbolTable.containsKey(splitter[0])){
+
+            variable = splitter[0];
+            value = Integer.parseInt(splitter[1]);
+
+            mySymbolTable.put(variable, value);
+            myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                                                    + mySymbolTable.get(variable));
+        }
+    }
