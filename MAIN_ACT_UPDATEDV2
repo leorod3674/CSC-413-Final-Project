@@ -1,0 +1,109 @@
+package com.example.lee.keyboardtestapp;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.xml.xpath.XPathExpression;
+
+public class MainActivity extends Activity{
+
+    EditText editText;
+    Button enterB;
+    TextView myTV;
+    String userText, replacedText,temp;
+    String[] splitter;
+    private Map<String, Integer> mySymbolTable = new HashMap<>();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        myTV = (TextView) findViewById(R.id.textView);
+        editText = (EditText) findViewById(R.id.editText);
+        enterB = (Button) findViewById(R.id.enterB);
+
+        enterB.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                userInput();
+            }
+        });
+    }
+
+    void userInput(){
+        userText = editText.getText().toString();
+        myTV.append("\n");
+
+        if(userText.matches("\\s*int\\s+[a-z]+\\s+(=)\\s+[(]*([0-9]+|[a-z]+)+[)]*\\s*;")){
+            myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Valid int statement");
+            replacedText = userText.replaceAll("int ","").replaceAll("[ ]+","").replaceAll("="," ").replaceAll(";","");
+            splitter();
+            symbolTable();
+        }
+        else if(userText.matches("\\s*circle(\\s+([0-9]+|[a-z]+)){3}\\s+[0-9]+\\s*;")){
+            myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Valid circle statement");
+            replacedText = userText.replaceAll("circle ", "").replaceAll("[ ]+"," ").replaceAll(";","");
+            splitter();
+        }
+        else if(userText.matches("\\s*rect(\\s+([0-9]+|[a-z]+)){4}\\s+[0-9]+\\s*;")){
+            myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Valid rect statement");
+            replacedText = userText.replaceAll("rect ", "").replaceAll("[ ]+"," ").replaceAll(";","");
+            splitter();
+        }
+        else myTV.setText(myTV.getText() +"\n"+ "Invalid statement");
+    }
+    void splitter(){
+        if(replacedText.contains("(")){
+            String[] parenSplitter = replacedText.split("\\),\\(|\\)|\\(");
+
+            for(int i = 0; i < parenSplitter.length; i++){
+                temp = (parenSplitter[0] + parenSplitter[1]);
+                Log.d("Temp", "splitter: " + temp);
+            }
+            splitter = temp.split(" ");
+        }
+        else splitter = replacedText.split(" ");
+
+
+        for(String spl : splitter){
+            myTV.setText(myTV.getText() +"\n"+ spl);
+            Log.d("Contents of array", "splitter: " + spl);
+        }
+
+        Log.d("Array length", "splitter: " + splitter.length);
+
+    }
+    void symbolTable(){
+
+        try{
+            if((mySymbolTable.containsKey(splitter[1]))){
+                int otherValue = mySymbolTable.get(splitter[1]);
+                mySymbolTable.put(splitter[0], otherValue);
+                myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                        + mySymbolTable.get(splitter[0]));
+            }else if(mySymbolTable.containsKey(splitter[0])){
+                myTV.setText(myTV.getText() +"\n"+ "Value already has value : "
+                        + mySymbolTable.get(splitter[0]));
+            }
+            if(!mySymbolTable.containsKey(splitter[0])){
+                mySymbolTable.put(splitter[0], Integer.parseInt(splitter[1]));
+                myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "
+                        + mySymbolTable.get(splitter[0]));
+            }
+        }catch(Exception E){
+            myTV.setText(myTV.getText() +"\n"
+                        + "Error! You are trying to set a null variable to your current variable!");
+        }
+    }
+}
