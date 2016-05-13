@@ -26,12 +26,10 @@ public class MainActivity extends Activity{
     String userText, replacedText,temp;
     String[] splitter;
     private Map<String, Integer> mySymbolTable = new HashMap<>();
-
+    private Vector<Shape> storeShapes = new Vector();
     RelativeLayout shapesView;
     Shape shape;
     int xPara, yPara, radPara, stylePara, rectLeft, rectTop, rectRight, rectBot, rectStyleNum;
-    private Vector<Shape> storeShapes = new Vector();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +71,18 @@ public class MainActivity extends Activity{
         userText = editText.getText().toString();
         myTV.append("\n");
 
-        if(userText.matches("\\s*int\\s+[a-z]+\\s+(=)\\s+[(]*([0-9]+|[a-z]+)+[)]*\\s*;")){
+        // Expressions: a = a + 1;
+        if(userText.matches("\\s*[a-z]+\\s+(=)\\s+[(]*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\))+[)]*\\s*;")){
+            myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Valid statement");
+            replacedText = userText.replaceAll("[ ]+","").replaceAll("="," ").replaceAll(";","");
+            splitter();
+            if(mySymbolTable.containsKey(splitter[0])){
+                symbolTable();
+            }
+            else myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Variable hasn't been inistantiated.");
+        }
+        // Setting variables: int a = 0;
+        else if(userText.matches("\\s*int\\s+[a-z]+\\s+(=)\\s+[(]*\\s*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\)*)+\\s*[)]*\\s*;")){
             myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Valid int statement");
             replacedText = userText.replaceAll("int ","").replaceAll("[ ]+","").replaceAll("="," ").replaceAll(";","");
             splitter();
@@ -95,13 +104,34 @@ public class MainActivity extends Activity{
     }
 
     void drawRect(){
-        rectLeft = Integer.parseInt(splitter[0]);
-        rectTop = Integer.parseInt(splitter[1]);
-        rectRight = Integer.parseInt(splitter[2]);
-        rectBot = Integer.parseInt(splitter[3]);
+        boolean VarExist;
+
+        for(int i = 0; i < splitter.length; i++){
+
+           if(splitter[i].matches("([a-z]+)")){
+
+           }
+        }
+
+        for(int i = 0; i < splitter.length; i++){
+
+            if(!mySymbolTable.containsKey(i)){
+                rectLeft = Integer.parseInt(splitter[0]);
+                rectTop = Integer.parseInt(splitter[1]);
+                rectRight = Integer.parseInt(splitter[2]);
+                rectBot = Integer.parseInt(splitter[3]);
+                Log.d("Variable doesn't exist", "drawRect: Did not contain variable");
+            }
+            else if(mySymbolTable.containsKey(i)){
+                rectLeft = mySymbolTable.get(splitter[0]);
+                rectTop = mySymbolTable.get(splitter[1]);
+                rectRight = mySymbolTable.get(splitter[2]);
+                rectBot = mySymbolTable.get(splitter[3]);
+                Log.d("Variable exist", "drawRect: Contains variable");
+            }
+        }
         rectStyleNum = Integer.parseInt(splitter[4]);
 
-        rectStyleNum = Integer.parseInt(splitter[4]);
         ShapeFactory factoryTest = AbstractShapeFactory.getShapeFactory(rectLeft, rectTop, rectRight, rectBot, rectStyleNum);
         adjustShapeAlpha();
         shape = factoryTest.getShape(getApplicationContext(), "rectangle");
@@ -124,11 +154,15 @@ public class MainActivity extends Activity{
 
     void splitter(){
         String temper = "";
+        if(userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")){
+            myTV.setText(myTV.getText() +"\n"+ userText +" "+ "Operators");
+        }
         if(replacedText.contains("(")){
-            String[] parenSplitter = replacedText.split("\\),\\(|\\)|\\(");
+            String[] parenSplitter = replacedText.split("[\\),\\(|\\)|\\(]+");
 
             for(int i = 0; i < parenSplitter.length; i++){
                 temp = (parenSplitter[0] + parenSplitter[1]);
+
                 Log.d("Temp", "splitter: " + temp);
             }
             splitter = temp.split(" ");
@@ -145,8 +179,8 @@ public class MainActivity extends Activity{
     }
 
     void symbolTable(){
-
         try{
+            // Checking Scenario: int a = b;
             if((mySymbolTable.containsKey(splitter[1]))){
                 int otherValue = mySymbolTable.get(splitter[1]);
                 mySymbolTable.put(splitter[0], otherValue);
@@ -156,6 +190,7 @@ public class MainActivity extends Activity{
                 myTV.setText(myTV.getText() +"\n"+ "Value already has value : "
                         + mySymbolTable.get(splitter[0]));
             }
+
             if(!mySymbolTable.containsKey(splitter[0])){
                 mySymbolTable.put(splitter[0], Integer.parseInt(splitter[1]));
                 myTV.setText(myTV.getText() +"\n"+ "Value for this variable is : "

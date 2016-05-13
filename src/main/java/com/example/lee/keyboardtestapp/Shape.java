@@ -11,7 +11,6 @@ import android.view.View;
  */
 public abstract class Shape extends View{
 
-    private float fadeAmt;
     int daStyle, ex, why, radius, fourth;
     Paint stylePaint;
 
@@ -28,62 +27,47 @@ public abstract class Shape extends View{
 
     void setFillColor(int fill){
 
+        stylePaint.setStyle(Paint.Style.FILL);
+
         if(fill == 1){
-            stylePaint.setStyle(Paint.Style.FILL);
             stylePaint.setColor(Color.BLUE);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(fill == 2){
-            stylePaint.setStyle(Paint.Style.FILL);
             stylePaint.setColor(Color.RED);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(fill == 3){
-            stylePaint.setStyle(Paint.Style.FILL);
             stylePaint.setColor(Color.BLACK);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(fill == 4){
-            stylePaint.setStyle(Paint.Style.FILL);
             stylePaint.setColor(Color.MAGENTA);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
     }
 
     void setStrokeColor(int stroke){
 
+        stylePaint.setStyle(Paint.Style.STROKE);
+        stylePaint.setStrokeWidth(20.0f);
+
         if(stroke == 1){
-            stylePaint.setStyle(Paint.Style.STROKE);
             stylePaint.setColor(Color.RED);
-            stylePaint.setStrokeWidth(40.0f);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(stroke == 2){
-            stylePaint.setStyle(Paint.Style.STROKE);
             stylePaint.setColor(Color.GREEN);
-            stylePaint.setStrokeWidth(40.0f);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(stroke == 3){
-            stylePaint.setStyle(Paint.Style.STROKE);
             stylePaint.setColor(Color.YELLOW);
-            stylePaint.setStrokeWidth(40.0f);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
         else if(stroke == 4){
-            stylePaint.setStyle(Paint.Style.STROKE);
             stylePaint.setColor(Color.GRAY);
-            stylePaint.setStrokeWidth(40.0f);
-            stylePaint.setAlpha((int) (getShapeAlpha() * 100));
         }
     }
 
     void setShapeAlpha(float alpha){
-        fadeAmt = alpha;
+        setAlpha(alpha);
     }
 
     float getShapeAlpha(){
-        return fadeAmt;
+        return getAlpha();
     }
 
     void removeShape(){

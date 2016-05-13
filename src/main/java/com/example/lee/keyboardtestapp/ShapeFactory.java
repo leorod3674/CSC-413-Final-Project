@@ -10,11 +10,11 @@ public class ShapeFactory {
     int styleNum, ex, why, ar, ze;
 
     public ShapeFactory(int x, int y, int r, int z, int style) {
-        ex = x;
-        why = y;
-        ar = r;
-        ze = z;
-        styleNum = style;
+        ex = x;     // ex = x is the first parameter
+        why = y;    // why = y is the second parameter
+        ar = r;     // ar = r is the third parameter
+        ze = z;     // ze = z is the third parameter
+        styleNum = style; // style number
     }
 
     public Shape getShape(Context context, String shape){

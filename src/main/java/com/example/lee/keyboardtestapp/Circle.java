@@ -3,15 +3,12 @@ package com.example.lee.keyboardtestapp;
 import android.content.Context;
 import android.graphics.Canvas;
 
-import java.util.Random;
-
 /**
  * Created by Lee on 5/11/2016.
  */
 public class Circle extends Shape{
 
     int xx, yy, rr;
-    //Random randy = new Random();
 
     public Circle(Context context, int x, int y, int r, int z, int style) {
         super(context, x, y, r, z, style);
@@ -28,7 +25,6 @@ public class Circle extends Shape{
         xx = ex;
         yy = why;
         rr = radius;
-
         if(daStyle == 1){
             setFillColor(daStyle);
             canvas.drawCircle(xx, yy, rr, stylePaint);
