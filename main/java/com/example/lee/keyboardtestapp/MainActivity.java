@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -24,8 +25,9 @@ public class MainActivity extends Activity {
     RelativeLayout shapesView;
     Shape shape;
     int xPara, yPara, radPara, stylePara, rectLeft, rectTop,
-                rectRight, rectBot, rectStyleNum;
+            rectRight, rectBot, rectStyleNum;
     AST evalAST = new AST();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +38,7 @@ public class MainActivity extends Activity {
         enterB = (Button) findViewById(R.id.enterB);
         clearB = (Button) findViewById(R.id.clearB);
 
-        clearB.setOnClickListener(new View.OnClickListener(){
+        clearB.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -75,21 +77,60 @@ public class MainActivity extends Activity {
         myTV.append("\n");
         // Expressions: a = a + 1;
         if (userText.matches("\\s*[a-z]+\\s+(=)\\s+[(]*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\))+[)]*\\s*;")) {
-            myTV.setText(myTV.getText() + "\n" + userText + " " + "Valid statement");
             replacedText = userText.replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
             splitter();
-            if (mySymbolTable.containsKey(splitter[0])) {
-                symbolTable();
-            } else
-                myTV.setText(userText + " " + "Variable hasn't been initialized.");
+            if (!mySymbolTable.containsKey(splitter[0])) {
+                myTV.setText("Variable isn't initialized.");
+            } else {
+                if (userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")) {
+                    try {
+                        int result;
+                        result = evalAST.eval(splitter[1]);
+                        myTV.setText(myTV.getText() + " " + result);
+                        Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                        splitter[1] = Integer.toString(result);
+                        Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                        symbolTable();
+                    } catch (Exception E) {
+                        myTV.setText("ERROR");
+                    }
+                } else {
+                    myTV.setText(myTV.getText() + "\n" + userText + " " + "Valid statement");
+                    if (mySymbolTable.containsKey(splitter[0])) {
+                        symbolTable();
+                    } else myTV.setText(userText + " " + "Variable hasn't been initialized.");
+                }
+                myTV.setText(myTV.getText() + "\n" + userText + " " + "Valid statement");
+                replacedText = userText.replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
+                splitter();
+                if (mySymbolTable.containsKey(splitter[0])) {
+                    symbolTable();
+                } else
+                    myTV.setText(userText + " " + "Variable hasn't been initialized.");
+            }
         }
         // Setting variables: int a = 0;
         else if (userText.matches("\\s*int\\s+[a-z]+\\s+(=)\\s+[(]*\\s*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\)*)+\\s*[)]*\\s*;")) {
-            myTV.setText(userText + " " + "Valid int statement");
-            replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
-            splitter();
-
-            symbolTable();
+            if (userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")) {
+                replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
+                splitter();
+                try {
+                    int result;
+                    result = evalAST.eval(splitter[1]);
+                    myTV.setText(myTV.getText() + " " + result);
+                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                    splitter[1] = Integer.toString(result);
+                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                    symbolTable();
+                } catch (Exception E) {
+                    myTV.setText("ERROR");
+                }
+            } else {
+                myTV.setText(userText + " " + "Valid int statement");
+                replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
+                splitter();
+                symbolTable();
+            }
         } else if (userText.matches("\\s*circle(\\s+([0-9]+|[a-z]+)){3}\\s+[0-9]+\\s*;")) {
             myTV.setText(userText + " " + "Valid circle statement");
             replacedText = userText.replaceAll("circle ", "").replaceAll("[ ]+", " ").replaceAll(";", "");
@@ -138,7 +179,7 @@ public class MainActivity extends Activity {
         }
         rectStyleNum = Integer.parseInt(splitter[4]);
         ShapeFactory factoryTest = AbstractShapeFactory.getShapeFactory(rectLeft, rectTop,
-                        rectRight, rectBot, rectStyleNum);
+                rectRight, rectBot, rectStyleNum);
         Log.d("x,y,rad", "drawCircle: " + rectLeft + rectTop + rectRight + rectBot);
         adjustShapeAlpha();
         shape = factoryTest.getShape(getApplicationContext(), "rectangle");
@@ -183,9 +224,6 @@ public class MainActivity extends Activity {
     }
 
     void splitter() {
-        if (userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")) {
-            myTV.setText(userText + " " + "Operators");
-        }
         if (replacedText.contains("(")) {
             String[] parenSplitter = replacedText.split("[\\),\\(|\\)|\\(]+");
 
@@ -195,17 +233,6 @@ public class MainActivity extends Activity {
             }
             splitter = temp.split(" ");
         } else splitter = replacedText.split(" ");
-
-        try{
-            int result;
-            result = evalAST.eval(splitter[1]);
-            myTV.setText(myTV.getText() + " " + result);
-            Log.d("Contents of array", "splitter: " + result);
-
-        }catch(Exception E){
-            myTV.setText("ERROR");
-        }
-
         Log.d("Array length", "splitter: " + splitter.length);
     }
 
@@ -215,16 +242,16 @@ public class MainActivity extends Activity {
             if ((mySymbolTable.containsKey(splitter[1]))) {
                 int otherValue = mySymbolTable.get(splitter[1]);
                 mySymbolTable.put(splitter[0], otherValue);
-                myTV.setText("Value for variable: " +splitter[0]+ " is "
-                            + mySymbolTable.get(splitter[0]));
+                myTV.setText("Value for variable: " + splitter[0] + " is "
+                        + mySymbolTable.get(splitter[0]));
             } else if (mySymbolTable.containsKey(splitter[0])) {
-                myTV.setText("Value for variable: " +splitter[0]+ " is "
-                            + mySymbolTable.get(splitter[0]));
+                myTV.setText("Value for variable: " + splitter[0] + " is "
+                        + mySymbolTable.get(splitter[0]));
             }
             if (!mySymbolTable.containsKey(splitter[0])) {
                 mySymbolTable.put(splitter[0], Integer.parseInt(splitter[1]));
-                myTV.setText("Value for variable: " +splitter[0]+ " is "
-                            + mySymbolTable.get(splitter[0]));
+                myTV.setText("Value for variable: " + splitter[0] + " is "
+                        + mySymbolTable.get(splitter[0]));
             }
         } catch (Exception E) {
             myTV.setText("Error! You are trying to set a null variable to your current variable!");

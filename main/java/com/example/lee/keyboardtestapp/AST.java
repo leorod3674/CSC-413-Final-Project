@@ -43,13 +43,11 @@ public class AST {
         } else if (input.charAt(inputPos) == '(') {
             inputPos++;
             return TokenType.O_PAREN;
-        } else if (input.charAt(inputPos) == ')') {
+        } else
             inputPos++;
             return TokenType.C_PAREN;
-        }
-        else{
-            return TokenType.NOTTOKEN;
-        }
+
+
     }
 
     void lastTT(){
@@ -61,7 +59,7 @@ public class AST {
         ASTNode root = inputTerm();
         TokenType nxtToken = nextTT();
 
-        if(nxtToken == TokenType.MUL || nxtToken == TokenType.DIV){
+        while(nxtToken == TokenType.MUL || nxtToken == TokenType.DIV){
 
             if(nxtToken == TokenType.MUL){
                 newRoot = new ASTNode('*');
@@ -83,7 +81,7 @@ public class AST {
         ASTNode root = doMulDiv();
         TokenType nxtToken = nextTT();
 
-        if(nxtToken == TokenType.ADD || nxtToken == TokenType.SUB){
+        while(nxtToken == TokenType.ADD || nxtToken == TokenType.SUB){
 
             if(nxtToken == TokenType.ADD){
                 newRoot = new ASTNode('+');
