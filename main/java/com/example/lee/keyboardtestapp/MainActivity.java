@@ -25,6 +25,7 @@ public class MainActivity extends Activity {
     Shape shape;
     int xPara, yPara, radPara, stylePara, rectLeft, rectTop,
                 rectRight, rectBot, rectStyleNum;
+    AST evalAST = new AST();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +88,7 @@ public class MainActivity extends Activity {
             myTV.setText(userText + " " + "Valid int statement");
             replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
             splitter();
+
             symbolTable();
         } else if (userText.matches("\\s*circle(\\s+([0-9]+|[a-z]+)){3}\\s+[0-9]+\\s*;")) {
             myTV.setText(userText + " " + "Valid circle statement");
@@ -181,7 +183,6 @@ public class MainActivity extends Activity {
     }
 
     void splitter() {
-        String temper = "";
         if (userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")) {
             myTV.setText(userText + " " + "Operators");
         }
@@ -195,10 +196,16 @@ public class MainActivity extends Activity {
             splitter = temp.split(" ");
         } else splitter = replacedText.split(" ");
 
-        for (String spl : splitter) {
-            temper += spl;
-            Log.d("Contents of array", "splitter: " + temper);
+        try{
+            int result;
+            result = evalAST.eval(splitter[1]);
+            myTV.setText(myTV.getText() + " " + result);
+            Log.d("Contents of array", "splitter: " + result);
+
+        }catch(Exception E){
+            myTV.setText("ERROR");
         }
+
         Log.d("Array length", "splitter: " + splitter.length);
     }
 
