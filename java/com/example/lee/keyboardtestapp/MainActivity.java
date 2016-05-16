@@ -17,7 +17,7 @@ public class MainActivity extends Activity {
     EditText editText;
     Button enterB, clearB;
     TextView myTV;
-    String userText, replacedText, temp;
+    String userText, replacedText;
     String[] splitter;
     private Map<String, Integer> mySymbolTable = new HashMap<>();
     private Vector<Shape> storeShapes = new Vector();
@@ -76,6 +76,7 @@ public class MainActivity extends Activity {
         myTV.append("\n");
         // Expressions: a = a + 1;
         if (userText.matches("\\s*[a-z]+\\s+(=)\\s+[(]*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\))+[)]*\\s*;")) {
+
             replacedText = userText.replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
             splitter();
             if (!mySymbolTable.containsKey(splitter[0])) {
@@ -103,17 +104,15 @@ public class MainActivity extends Activity {
                         replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
                         splitter();
                     }
-
                     try {
-                        int result;
-                        result = evalAST.eval(splitter[1]);
-                        myTV.setText(myTV.getText() + " " + result);
-                        Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                        myTV.setText("Evaluated result of: " + splitter[1] + " = ");
+                        int result = evalAST.eval(splitter[1]);
+                        myTV.setText(myTV.getText() +" "+ result);
                         splitter[1] = Integer.toString(result);
-                        Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                        //Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                        //Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
                         mySymbolTable.remove(splitter[0]);
                         mySymbolTable.put(splitter[0], result);
-
                     } catch (Exception E) {
                         myTV.setText("ERROR");
                     }
@@ -126,32 +125,22 @@ public class MainActivity extends Activity {
                     myTV.setText(myTV.getText() + "\n" + userText + " " + "Valid statement");
                     replacedText = userText.replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
                     splitter();
-                    if (mySymbolTable.containsKey(splitter[0])) {
-                        symbolTable();
-                    } else
-                        myTV.setText(userText + " " + "Variable hasn't been initialized.");
                 }
             }
-        }
-        // Setting variables: int a = 0;
+        }   // Setting variables: int a = 0;
         else if (userText.matches("\\s*int\\s+[a-z]+\\s+(=)\\s+[(]*\\s*(\\(*\\s+|[0-9]+|[a-z]+|[-+/*]*|\\s+\\)*)+\\s*[)]*\\s*;")) {
+
             String varCheck, concatStr = "";
             if (userText.contains("+") || userText.contains("-") || userText.contains("*") || userText.contains("/")) {
                 varCheck = userText.replaceAll("int ", "").replaceAll("=", " ").replaceAll(";", "").replaceAll("[ ]+", " ");
                 splitter = varCheck.split(" ");
-//                Log.d("varCheck", "userInput: " + splitter.length + " " + varCheck);
-//                Log.d(" At index 0", ": " + splitter[0] + " At index 1: " + splitter[1]);
                 for (int i = 1; i < splitter.length; i++) {
                     if (splitter[i].matches("[a-z]+")) {
                         if (mySymbolTable.containsKey(splitter[i])) {
                             int varValue = mySymbolTable.get(splitter[i]);
                             String valToStr = Integer.toString(varValue);
                             splitter[i] = valToStr;
-//                            Log.d(" varValue", ": " + varValue);
-//                            Log.d(" valToStr", ": " + valToStr);
                         }
-//                        Log.d(" At index 0", ": " + splitter[0] + " At index 1: " + splitter[1]
-//                                + " At index 2: " + splitter[2] + " At index 3: " + splitter[3]);
                     }
                     concatStr += splitter[i];
                 }
@@ -159,38 +148,45 @@ public class MainActivity extends Activity {
                 if (!concatStr.equals(null)) {
                     splitter[1] = concatStr;
                     Log.d("splitter[1]", ": " + splitter[1]);
-                } else {
-                    replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
-                    splitter();
                 }
+//                else {
+//                    replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
+//                    splitter();
+//                }
                 try {
-                    int result;
-                    result = evalAST.eval(splitter[1]);
-                    myTV.setText(myTV.getText() + " " + result);
-                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+                    int result = evalAST.eval(splitter[1]);
                     splitter[1] = Integer.toString(result);
-                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+//                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
+//                    Log.d("Contents of array", "splitter: " + splitter[0] + " " + splitter[1]);
                     symbolTable();
                 } catch (Exception E) {
                     myTV.setText("ERROR IN HERE");
                 }
-            } else {
+            }
+            else {
                 myTV.setText(userText + " " + "Valid int statement");
-                replacedText = userText.replaceAll("int ", "").replaceAll("[ ]+", "").replaceAll("=", " ").replaceAll(";", "");
+                replacedText = userText.replaceAll("\\s*int\\s+", "").replaceAll("[ ]+", " ").replaceAll("\\s*=\\s+", " ").replaceAll(";", "");
                 splitter();
                 symbolTable();
             }
-        } else if (userText.matches("\\s*circle(\\s+([0-9]+|[a-z]+)){3}\\s+[0-9]+\\s*;")) {
+        }
+        else if (userText.matches("\\s*circle(\\s*([0-9]+|[a-z]+)){3}\\s+[0-9]+\\s*;")) {
+
             myTV.setText(userText + " " + "Valid circle statement");
-            replacedText = userText.replaceAll("circle ", "").replaceAll("[ ]+", " ").replaceAll(";", "");
+            replacedText = userText.replaceAll("\\s*circle\\s+", "").replaceAll(";", "");
+            Log.d("Circle replacedText", ": " + replacedText);
             splitter();
+            Log.d("Circle split Array", ": " + splitter[0] +" "+ splitter[1] +" "+ splitter[2] +" "+ splitter[3]);
             drawCircle();
-        } else if (userText.matches("\\s*rect(\\s+([0-9]+|[a-z]+)){4}\\s+[0-9]+\\s*;")) {
+        }
+        else if (userText.matches("\\s*rect(\\s*([0-9]+|[a-z]+)){4}\\s+[0-9]+\\s*;")) {
+
             myTV.setText(userText + " " + "Valid rect statement");
-            replacedText = userText.replaceAll("rect ", "").replaceAll("[ ]+", " ").replaceAll(";", "");
+            replacedText = userText.replaceAll("\\s*rect\\s+", "").replaceAll(";", "");
             splitter();
             drawRect();
-        } else myTV.setText("Invalid statement");
+        }
+        else myTV.setText("Invalid statement");
     }
 
     void drawRect() {
@@ -273,7 +269,7 @@ public class MainActivity extends Activity {
     }
 
     void splitter() {
-        splitter = replacedText.split(" ");
+        splitter = replacedText.split("\\s+");
         Log.d("Array length", "splitter: " + splitter.length);
     }
 
