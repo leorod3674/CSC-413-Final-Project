@@ -224,15 +224,7 @@ public class MainActivity extends Activity {
     }
 
     void splitter() {
-        if (replacedText.contains("(")) {
-            String[] parenSplitter = replacedText.split("[\\),\\(|\\)|\\(]+");
-
-            for (int i = 0; i < parenSplitter.length; i++) {
-                temp = (parenSplitter[0] + parenSplitter[1]);
-                Log.d("Temp", "splitter: " + temp);
-            }
-            splitter = temp.split(" ");
-        } else splitter = replacedText.split(" ");
+        splitter = replacedText.split(" ");
         Log.d("Array length", "splitter: " + splitter.length);
     }
 

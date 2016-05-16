@@ -10,7 +10,7 @@ public class AST {
 
     StringBuffer input;
     int inputPos, temp;
-    ASTNode newRoot;
+//    ASTNode newRoot;
     enum TokenType {
         NUM, ADD, SUB, MUL, DIV, O_PAREN, C_PAREN, ENDT, NOTTOKEN;
     }
@@ -43,11 +43,11 @@ public class AST {
         } else if (input.charAt(inputPos) == '(') {
             inputPos++;
             return TokenType.O_PAREN;
-        } else
+        } else if(input.charAt(inputPos) == ')'){
             inputPos++;
             return TokenType.C_PAREN;
-
-
+        }
+        else return TokenType.NOTTOKEN;
     }
 
     void lastTT(){
@@ -61,6 +61,7 @@ public class AST {
 
         while(nxtToken == TokenType.MUL || nxtToken == TokenType.DIV){
 
+            ASTNode newRoot = null;
             if(nxtToken == TokenType.MUL){
                 newRoot = new ASTNode('*');
             }
@@ -83,6 +84,7 @@ public class AST {
 
         while(nxtToken == TokenType.ADD || nxtToken == TokenType.SUB){
 
+            ASTNode newRoot = null;
             if(nxtToken == TokenType.ADD){
                 newRoot = new ASTNode('+');
             }
