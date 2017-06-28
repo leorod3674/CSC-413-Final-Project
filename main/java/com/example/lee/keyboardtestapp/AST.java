@@ -3,9 +3,7 @@ package com.example.lee.keyboardtestapp;
 import android.media.session.MediaSession;
 import android.widget.TextView;
 
-/**
- * Created by Lee on 5/15/2016.
- */
+
 public class AST {
 
     StringBuffer input;
