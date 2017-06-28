@@ -1,8 +1,5 @@
 package com.example.lee.keyboardtestapp;
 
-/**
- * Created by Lee on 5/15/2016.
- */
 public class ASTNode {
 
     public ASTNode leftT;
